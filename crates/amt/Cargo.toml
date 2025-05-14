@@ -1,0 +1,33 @@
+[package]
+name = "amt"
+description = "Array-Mapped Trie implementation"
+keywords = ["data-structures"]
+categories = ["no-std"]
+homepage = "https://github.com/rjected/amt/tree/main/crates/amt"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+exclude.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = [
+    "-Zunstable-options",
+    "--generate-link-to-definition",
+    "--show-type-layout",
+]
+
+[lints]
+workspace = true
+
+[dependencies]
+
+[features]
+default = [
+    "std",
+]
+std = []

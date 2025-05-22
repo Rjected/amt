@@ -67,6 +67,38 @@ impl AMTBitmap {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Helper function to create a default AMTNode for testing
+    fn default_amt_node() -> AMTNode {
+        AMTNode {
+            node_count: 0,
+            chr: 0,
+            node_or_value: AMTNodeBase::Value(0), // Or some other default
+        }
+    }
+
+    #[test]
+    fn test_insert_stub() {
+        let mut node = default_amt_node();
+        node.insert(1, 100); // Call insert, no assertion yet
+    }
+
+    #[test]
+    fn test_delete_stub() {
+        let mut node = default_amt_node();
+        node.delete(1); // Call delete, no assertion yet
+    }
+
+    #[test]
+    fn test_search_stub() {
+        let node = default_amt_node();
+        node.search(1); // Call search, no assertion yet
+    }
+}
+
 /// An enum used for the AMT node index base and value.
 ///
 /// NOTE: AMTSmall in the paper / above code, uses a union to limit memory used. This could be
@@ -115,5 +147,23 @@ impl AMTNode {
     /// Returns a reference to the current index base, if it exists.
     pub fn index_base(&self) -> Option<&Box<AMTNode>> {
         self.node_or_value.index_base()
+    }
+
+    /// Insert a value into the AMT
+    pub fn insert(&mut self, _key: u32, _value: u32) -> Option<u32> {
+        // TODO: implement
+        None
+    }
+
+    /// Delete a value from the AMT
+    pub fn delete(&mut self, _key: u32) -> Option<u32> {
+        // TODO: implement
+        None
+    }
+
+    /// Search for a value in the AMT
+    pub fn search(&self, _key: u32) -> Option<u32> {
+        // TODO: implement
+        None
     }
 }

@@ -61,6 +61,13 @@ struct AMTBitmap {
 }
 
 impl AMTBitmap {
+    /// Creates a new, empty AMTBitmap.
+    ///
+    /// Initializes the inner `map` to 0.
+    pub fn new() -> Self {
+        Self { map: 0 }
+    }
+
     /// Count the bits in the bitmap
     fn count_bits(&self) -> u32 {
         self.map.count_ones()
@@ -154,11 +161,7 @@ mod tests {
 
     // Helper function to create a default AMTNode for testing
     fn default_amt_node() -> AMTNode {
-        AMTNode {
-            node_count: 0,
-            chr: 0,
-            node_or_value: AMTNodeBase::Value(0), // Or some other default
-        }
+        AMTNode::new() // Utilize the new() constructor
     }
 
     #[test]
@@ -238,5 +241,12 @@ mod tests {
 
         let bitmap2 = AMTBitmap { map: 0xFF00FF00FF00FF00 }; // 32 bits set
         assert_eq!(bitmap2.count_bits(), 32);
+    }
+
+    #[test]
+    fn test_new_amt_bitmap() {
+        let bitmap = AMTBitmap::new();
+        assert_eq!(bitmap.map, 0);
+        assert_eq!(bitmap.count_bits(), 0);
     }
 }

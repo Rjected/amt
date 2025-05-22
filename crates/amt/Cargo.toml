@@ -15,11 +15,7 @@ exclude.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
-rustdoc-args = [
-    "-Zunstable-options",
-    "--generate-link-to-definition",
-    "--show-type-layout",
-]
+# rustdoc-args removed to allow stable build
 
 [lints]
 workspace = true

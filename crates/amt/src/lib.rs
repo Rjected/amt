@@ -67,38 +67,6 @@ impl AMTBitmap {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    // Helper function to create a default AMTNode for testing
-    fn default_amt_node() -> AMTNode {
-        AMTNode {
-            node_count: 0,
-            chr: 0,
-            node_or_value: AMTNodeBase::Value(0), // Or some other default
-        }
-    }
-
-    #[test]
-    fn test_insert_stub() {
-        let mut node = default_amt_node();
-        node.insert(1, 100); // Call insert, no assertion yet
-    }
-
-    #[test]
-    fn test_delete_stub() {
-        let mut node = default_amt_node();
-        node.delete(1); // Call delete, no assertion yet
-    }
-
-    #[test]
-    fn test_search_stub() {
-        let node = default_amt_node();
-        node.search(1); // Call search, no assertion yet
-    }
-}
-
 /// An enum used for the AMT node index base and value.
 ///
 /// NOTE: AMTSmall in the paper / above code, uses a union to limit memory used. This could be
@@ -144,6 +112,18 @@ pub struct AMTNode {
 }
 
 impl AMTNode {
+    /// Creates a new, empty AMTNode.
+    ///
+    /// Initializes `node_count` to 0, `chr` to 0, and `node_or_value`
+    /// to `AMTNodeBase::Value(0)` as a starting default.
+    pub fn new() -> Self {
+        Self {
+            node_count: 0,
+            chr: 0, // Default character, can be refined later
+            node_or_value: AMTNodeBase::Value(0), // Default initial state
+        }
+    }
+
     /// Returns a reference to the current index base, if it exists.
     pub fn index_base(&self) -> Option<&Box<AMTNode>> {
         self.node_or_value.index_base()
@@ -165,5 +145,98 @@ impl AMTNode {
     pub fn search(&self, _key: u32) -> Option<u32> {
         // TODO: implement
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Helper function to create a default AMTNode for testing
+    fn default_amt_node() -> AMTNode {
+        AMTNode {
+            node_count: 0,
+            chr: 0,
+            node_or_value: AMTNodeBase::Value(0), // Or some other default
+        }
+    }
+
+    #[test]
+    fn test_insert_stub() {
+        let mut node = default_amt_node();
+        // Test with different keys and values
+        assert_eq!(node.insert(1, 100), None);
+        assert_eq!(node.insert(2, 200), None);
+        assert_eq!(node.insert(0xFFFFFFFF, 300), None); // Max u32 key
+        assert_eq!(node.insert(0, 0), None); // Zero key and value
+    }
+
+    #[test]
+    fn test_delete_stub() {
+        let mut node = default_amt_node();
+        // Test with different keys
+        assert_eq!(node.delete(1), None);
+        assert_eq!(node.delete(0xFFFFFFFF), None);
+        assert_eq!(node.delete(0), None);
+    }
+
+    #[test]
+    fn test_search_stub() {
+        let node = default_amt_node();
+        // Test with different keys, expecting None as it's a stub
+        assert_eq!(node.search(1), None);
+        assert_eq!(node.search(0xFFFFFFFF), None);
+        assert_eq!(node.search(0), None);
+    }
+
+    #[test]
+    fn test_new_amt_node() {
+        let node = AMTNode::new();
+        assert_eq!(node.node_count, 0);
+        assert_eq!(node.chr, 0);
+        match node.node_or_value {
+            AMTNodeBase::Value(val) => assert_eq!(val, 0),
+            _ => panic!("Expected AMTNodeBase::Value(0) for a new node"),
+        }
+        assert!(node.index_base().is_none()); // Should not have a base node initially
+    }
+
+    #[test]
+    fn test_amt_bitmap_count_bits_empty() {
+        let bitmap = AMTBitmap { map: 0 };
+        assert_eq!(bitmap.count_bits(), 0);
+    }
+
+    #[test]
+    fn test_amt_bitmap_count_bits_full() {
+        let bitmap = AMTBitmap { map: u64::MAX };
+        assert_eq!(bitmap.count_bits(), 64);
+    }
+
+    #[test]
+    fn test_amt_bitmap_count_bits_single_bit() {
+        let bitmap1 = AMTBitmap { map: 1 };
+        assert_eq!(bitmap1.count_bits(), 1);
+
+        let bitmap2 = AMTBitmap { map: 1 << 5 };
+        assert_eq!(bitmap2.count_bits(), 1);
+
+        let bitmap3 = AMTBitmap { map: 1 << 63 };
+        assert_eq!(bitmap3.count_bits(), 1);
+    }
+
+    #[test]
+    fn test_amt_bitmap_count_bits_sparse() {
+        let bitmap = AMTBitmap { map: 0b10101 }; // 3 bits set
+        assert_eq!(bitmap.count_bits(), 3);
+    }
+
+    #[test]
+    fn test_amt_bitmap_count_bits_dense() {
+        let bitmap = AMTBitmap { map: 0b111000 }; // 3 bits set
+        assert_eq!(bitmap.count_bits(), 3);
+
+        let bitmap2 = AMTBitmap { map: 0xFF00FF00FF00FF00 }; // 32 bits set
+        assert_eq!(bitmap2.count_bits(), 32);
     }
 }
